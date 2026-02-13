@@ -1,11 +1,14 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.InputSystem;
 
 namespace _Project.Scripts.Inputs
 {
     public class InputReader : MonoBehaviour, IA_Character.IMovementActions
     {
+        public Vector2 Movement { get; set; }
+        public bool IsRunning { get; set; }
+        public bool IsCrouching { get; set; }
+        
         private IA_Character _controls;
 
         private void Awake()
@@ -22,7 +25,7 @@ namespace _Project.Scripts.Inputs
 
         public void OnMove(InputAction.CallbackContext context)
         {
-            Debug.Log("OnMove");
+            Movement = context.ReadValue<Vector2>();
         }
 
         public void OnLook(InputAction.CallbackContext context)

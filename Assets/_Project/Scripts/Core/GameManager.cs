@@ -6,7 +6,7 @@ namespace _Project.Scripts.Core
     {
         private void Awake()
         {
-            Application.targetFrameRate = 60;
+            // Application.targetFrameRate = 60;
 
         }
 

@@ -18074,6 +18074,10 @@ PrefabInstance:
       propertyPath: m_LocalRotation.z
       value: -9.0557117e-32
       objectReference: {fileID: 0}
+    - target: {fileID: 1153041946279296049, guid: c547c11ccba6852408beb7236bcde6f9, type: 3}
+      propertyPath: inputReader
+      value: 
+      objectReference: {fileID: 1062680753}
     - target: {fileID: 2614723795582850848, guid: c547c11ccba6852408beb7236bcde6f9, type: 3}
       propertyPath: m_Name
       value: PFB_Character
