@@ -17,6 +17,13 @@ namespace _Project.Scripts.Player
 
         [Header("Smoothing")]
         [SerializeField] private float speedSmoothTime = 0.1f;
+        
+        [Header("Head Aiming")]
+        [SerializeField] private Transform lookTarget;
+        [SerializeField] private float lookDistance = 10f;
+        [Range(0, 180)] public float maxRotationAngle = 90f;
+
+        
     
         private Vector2 _currentVelocity;
         private Vector2 _velocitySmoothVelocity;
@@ -27,20 +34,19 @@ namespace _Project.Scripts.Player
         private void Update()
         {
             Move();
+            HeadTrack();
         }
 
         private void Move()
         {
-            // 1. Girdileri Al
-            float moveX = inputReader.Movement.x; // A-D veya Sol-Sağ
-            float moveY = inputReader.Movement.y;   // W-S veya Yukarı-Aşağı
-            bool isRunning = inputReader.IsRunning;
-
-            Vector2 input = new Vector2(moveX, moveY);
-            float targetSpeed = isRunning ? runSpeed : walkSpeed;
-
-            // 2. Animator Parametrelerini Yumuşat (SmoothDamp en akıcı geçişi sağlar)
-            // Giriş yoksa 0'a, varsa hedef hıza doğru pürüzsüz geçiş yapar
+            // Get input values
+            var moveX = inputReader.Movement.x;
+            var moveY = inputReader.Movement.y;
+            var isRunning = inputReader.IsRunning;
+            var input = new Vector2(moveX, moveY);
+            var targetSpeed = isRunning ? runSpeed : walkSpeed;
+            
+            // Smooth damp animator parameters
             _currentVelocity = Vector2.SmoothDamp(
                 _currentVelocity, 
                 input * targetSpeed, 
@@ -48,18 +54,25 @@ namespace _Project.Scripts.Player
                 speedSmoothTime
             );
 
-            // 3. Karakteri Kameraya Göre Döndür (Opsiyonel ama TPS için gerekli)
+            // Rotate the character relative to the camera
             if (input.sqrMagnitude > 0.01f)
             {
-                Vector3 camForward = Camera.main.transform.forward;
+                var camForward = Camera.main.transform.forward;
                 camForward.y = 0;
-                Quaternion targetRot = Quaternion.LookRotation(camForward);
+                
+                var targetRot = Quaternion.LookRotation(camForward);
                 transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, Time.deltaTime * rotationSpeed);
             }
 
-            // 4. Animator'ı Güncelle
+            // Update animator parameters
             animator.SetFloat(_xVelHash, _currentVelocity.x);
             animator.SetFloat(_yVelHash, _currentVelocity.y);
+        }
+
+        private void HeadTrack()
+        {
+            var targetPos = Camera.main.transform.position + Camera.main.transform.forward * lookDistance;
+            lookTarget.position = targetPos;
         }
     }
 }
